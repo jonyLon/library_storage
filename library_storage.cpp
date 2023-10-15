@@ -66,13 +66,14 @@ void printOrigin(InfoOrigin item, string text)
     cout << item.type + putSpace(typeSpace) << item.genre + putSpace(genreSpace) << item.year << endl;
 }
 
-void editOrigin(InfoOrigin item)
+InfoOrigin editOrigin(InfoOrigin item)
 {
     cout << "\t Name      :: "; cin.getline(item.name, Size);
     cout << "\t Author    :: "; cin.getline(item.author, Size);
     cout << "\t Type      :: "; cin.getline(item.type, Size);
     cout << "\t Genre     :: "; cin.getline(item.genre, Size);
     cout << "\t Year      :: "; cin >> item.year;
+    return item;
 }
 
 void printOrigins(InfoOrigin* library, int size)
@@ -97,7 +98,7 @@ void addLastItemInStorage(InfoOrigin newItem) {
 }
 
 
-void addNewItem(InfoOrigin* &library, int& size, InfoOrigin newItem)
+void addNewLastItem(InfoOrigin* &library, int& size, InfoOrigin newItem)
 {
     InfoOrigin* tmp = new InfoOrigin[size + 1];
     for (size_t i = 0; i < size; i++)
@@ -110,6 +111,34 @@ void addNewItem(InfoOrigin* &library, int& size, InfoOrigin newItem)
     library = tmp;
     addLastItemInStorage(newItem);
 }
+
+
+void addNewItemByIndex(InfoOrigin*& library, int& size, int index, InfoOrigin newItem)
+{
+         if (index < 0 || index > size) {
+             cout << "Index error" << endl;
+             return;
+         }
+         InfoOrigin* tmp = new InfoOrigin[size + 1];
+         for (size_t i = 0; i < size; i++)
+         {
+             if (i < index) {
+                 tmp[i] = library[i];
+             }
+             else {
+                 tmp[i + 1] = library[i];
+             };
+         }
+         tmp[index] = newItem;
+         size++;
+         delete[]library;
+         library = tmp;
+}
+
+
+
+
+
 
 
 int searchByName(InfoOrigin* library, const int &size,  char* name)
@@ -286,6 +315,16 @@ int amountOfBooksByGenre(InfoOrigin*& library, const int& size, char* genre) {
     return amount;
 }
 
+void editItemByIndex(InfoOrigin* &library, int &size, int index) {
+    if (index > size - 1 || index < 0) {
+        cout << "Index error" << endl;
+        return;
+    }
+    InfoOrigin editedItem = editOrigin(library[index]);
+    delItemByIndex(library, size, index);
+    addNewItemByIndex(library, size, index, editedItem);
+    modifyItemsInStorage(size, library);
+}
 
 
 
@@ -312,6 +351,8 @@ int main()
     printOrigins(magazineSelectionByYear, selectionSize);
     char* genre = (char*)"Fantasy";
     cout << "Storage contain " << amountOfBooksByGenre(library, size, genre) <<" "<< toLowerCase(genre) << " books" << endl;
+    //editItemByIndex(library, size, 5);
+    //printOrigins(library, size);
 
 
 
@@ -356,13 +397,5 @@ int main()
     //        file.write((char*)&library[i], sizeof(InfoOrigin));
     //    }
     //}
-
-
-
-
-
-
-
-
 }
 
